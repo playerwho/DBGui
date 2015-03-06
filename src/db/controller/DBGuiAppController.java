@@ -17,10 +17,14 @@ public class DBGuiAppController
 		
 	}
 	
+	/**
+	 * runs the methods located inside
+	 */
 	public void start()
 	{
 		
 	}
+	
 	/**
 	 * getter for appFrame
 	 * @return
@@ -28,5 +32,14 @@ public class DBGuiAppController
 	public DBGuiFrame getAppFrame()
 	{	
 		return appFrame;
+	}
+	
+	/**
+	 * getter for the database
+	 * @return
+	 */
+	public DataBaseController getDatabase()
+	{
+		return database;
 	}
 }
