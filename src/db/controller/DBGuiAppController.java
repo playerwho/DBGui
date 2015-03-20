@@ -1,10 +1,17 @@
 package db.controller;
 
+import javax.swing.JOptionPane;
 import db.view.DBGuiFrame;
 
 public class DBGuiAppController
 {
+	/**
+	 * connection to Frame
+	 */
 	private DBGuiFrame appFrame;
+	/**
+	 * connection to DataBaseController
+	 */
 	private DataBaseController database;
 	
 	/**
@@ -22,7 +29,6 @@ public class DBGuiAppController
 	 */
 	public void start()
 	{
-		
 	}
 	
 	/**

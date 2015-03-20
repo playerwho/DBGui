@@ -5,6 +5,9 @@ import db.controller.DBGuiAppController;
 
 public class DBGuiFrame extends JFrame
 {
+	/**
+	 * connection to Panel
+	 */
 	private DBGuiPanel appPanel;
 	
 	/**
