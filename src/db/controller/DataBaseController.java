@@ -4,11 +4,13 @@ import java.sql.*;
 
 import javax.swing.*;
 
+import db.model.QueryInfo;
+
 /**
  * 
  * @author Austin Widmeier
- * @version 1.4
- *  3/18/15, more generic method for connectionString, wokring on gui implimention
+ * @version 1.5
+ *  3-24-15: added a cell renderer for the DB, previous problems still exist
  */
 public class DataBaseController
 {
@@ -33,11 +35,7 @@ public class DataBaseController
 	/**
 	 * builds a DB connection String with the given parameters.
 	 * 	? breaks/ ends the path and starts sending information to Server.
-	 *  & add specific information to be sent to Server.
-	 * @param password 
-	 * @param userName 
-	 * @param DBName 
-	 * @param pathToServer 
+	 *  & add specific information to be sent to Server
 	 * @param pathToServer - self explanitory
 	 * @param DBName - name of the Database
 	 * @param userName - your username on the DB you are trying to access
@@ -49,10 +47,7 @@ public class DataBaseController
 		connectionString += pathToServer;
 		connectionString += "/" + DBName;
 		connectionString += "?user=" + userName;
-		connectionString += "&password=" + password;
-		
-		
-			
+		connectionString += "&password=" + password;		
 	}
 
 	/**
@@ -63,10 +58,9 @@ public class DataBaseController
 	public DataBaseController(DBGuiAppController baseController)
 	{
 		
-//		connectionString = "jdbc:mysql://localhost/information_schema?user=root";
+		connectionString = "jdbc:mysql://10.228.5.160/book_reading?user=a.widmeier&password=widm140";
 		this.baseController = baseController;
 	
-		connectionStringBuilder("localhost", "dota2", "root", "");
 		checkDriver();
 		setupConnection();
 	}
@@ -266,6 +260,8 @@ public class DataBaseController
 	{
 		String results = "";
 		String query = "SHOW TABLES";
+		long startTime, endTime;
+		startTime = System.currentTimeMillis();
 
 		try
 		{
@@ -281,11 +277,13 @@ public class DataBaseController
 			// close to prevent data leaks and unintentional updating.
 			answer.close();
 			firstStatement.close();
+			endTime = System.currentTimeMillis();
 		} catch (SQLException currentSQLError)
 		{
+			endTime = System.currentTimeMillis();
 			displayErrors(currentSQLError);
 		}
-
+		baseController.getTimingInfoList().add(new QueryInfo(query, endTime - startTime));
 		return results;
 	}
 	
@@ -352,7 +350,7 @@ public class DataBaseController
 	public String [][] bestInfo ()
 	{
 		String [][] results;
-		String query = "SELECT * FROM `role`";
+		String query = "SELECT * `book_reading`.`books`";
 		
 		try
 		{
@@ -429,16 +427,16 @@ public class DataBaseController
 	public String [] getMetaData()
 	{
 		String [] colInfo;
-		String query = "SELECT * FROM `role`";
 
 		try
 		{
 			Statement firstStatement = databaseConnection.createStatement();
-			ResultSet answer = firstStatement.executeQuery(query);
+			ResultSet answer = firstStatement.executeQuery(currentQuery);
 			ResultSetMetaData myMeta = answer.getMetaData();
 			
 			
 			colInfo = new String[myMeta.getColumnCount()];
+			
 			for(int spot = 0; spot < myMeta.getColumnCount(); spot++)
 			{
 				colInfo[spot] = myMeta.getColumnName(spot + 1);
@@ -498,7 +496,7 @@ public class DataBaseController
 	public String describeTable()
 	{
 		String results = "";
-		String query = "DESCRIBE `heroes`";
+		String query = "DESCRIBE `books`";
 		try
 		{
 			Statement firstStatement = databaseConnection.createStatement();

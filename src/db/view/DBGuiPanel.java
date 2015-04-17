@@ -1,5 +1,7 @@
 package db.view;
 
+import db.view.TableCellWrapRenderer;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -10,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 
 import db.controller.DBGuiAppController;
 
+@SuppressWarnings("serial")
 public class DBGuiPanel extends JPanel
 {
 	/**
@@ -56,6 +59,10 @@ public class DBGuiPanel extends JPanel
 	 * declares a password field to be used on the DB
 	 */
 	private JPasswordField passwordField;
+	/**
+	 * declares the cell renderer for the DB
+	 */
+	private TableCellWrapRenderer cellRenderer;
 	
 	/**
 	 * the baseContoller from the appController is the same as baseController in the Panel, also calls 4 methods and creates varius objects
@@ -71,9 +78,11 @@ public class DBGuiPanel extends JPanel
 		displayArea = new JTextArea(10,30);
 		displayPane = new JScrollPane(displayArea);
 		baseLayout = new SpringLayout();
-		baseLayout.putConstraint(SpringLayout.NORTH, textPane, 60, SpringLayout.NORTH, this);
+		
 		describeButton = new JButton("Describe dota2");
 		passwordField = new JPasswordField(null, 20);
+		cellRenderer = new TableCellWrapRenderer();
+		
 		
 		setupTable();
 		setupPane();   
@@ -89,8 +98,13 @@ public class DBGuiPanel extends JPanel
 	{
 		//one D Array for column titles
 		//2D Array for contents
-		tableData = new JTable(new DefaultTableModel(baseController.getDatabase().bestInfo(), baseController.getDatabase().getMetaData()));
+		tableData = new JTable(new DefaultTableModel(baseController.getDatabase().tableInfo(), baseController.getDatabase().getMetaData()));
 		displayPane = new JScrollPane(tableData);
+		
+		for(int spot = 0; spot < tableData.getColumnCount(); spot++)
+		{
+			tableData.getColumnModel().getColumn(spot).setCellRenderer(cellRenderer);
+		}
 		
 	}
 
@@ -140,6 +154,7 @@ public class DBGuiPanel extends JPanel
 		baseLayout.putConstraint(SpringLayout.NORTH, describeButton, 250, SpringLayout.NORTH, this);
 		baseLayout.putConstraint(SpringLayout.WEST, describeButton, 25, SpringLayout.WEST, this);
 		baseLayout.putConstraint(SpringLayout.WEST, displayPane, 500, SpringLayout.WEST, this);
+		baseLayout.putConstraint(SpringLayout.NORTH, textPane, 60, SpringLayout.NORTH, this);
 	}
 	/**
 	 * sets up the window panel

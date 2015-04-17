@@ -1,7 +1,10 @@
 package db.controller;
 
 import javax.swing.JOptionPane;
+
+import db.model.QueryInfo;
 import db.view.DBGuiFrame;
+import java.util.ArrayList;
 
 public class DBGuiAppController
 {
@@ -14,14 +17,16 @@ public class DBGuiAppController
 	 */
 	private DataBaseController database;
 	
+	private ArrayList<QueryInfo> timingInfoList;
+	
 	/**
 	 * defines database and appFrame
 	 */
 	public DBGuiAppController()
 	{
+		timingInfoList = new ArrayList<QueryInfo>();
 		database = new DataBaseController(this);
 		appFrame = new DBGuiFrame(this);
-		
 	}
 	
 	/**
@@ -47,5 +52,10 @@ public class DBGuiAppController
 	public DataBaseController getDatabase()
 	{
 		return database;
+	}
+	
+	public ArrayList<QueryInfo> getTimingInfoList()
+	{
+		return timingInfoList;
 	}
 }
