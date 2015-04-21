@@ -54,6 +54,10 @@ public class DBGuiAppController
 		return database;
 	}
 	
+	/**
+	 * getter for timing info
+	 * @return
+	 */
 	public ArrayList<QueryInfo> getTimingInfoList()
 	{
 		return timingInfoList;

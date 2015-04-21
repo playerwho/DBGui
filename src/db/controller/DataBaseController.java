@@ -167,6 +167,8 @@ public class DataBaseController
 	public void alterStatement()
 	{
 		String results;
+		long startTime, endTime;
+		startTime = System.currentTimeMillis();
 		try
 		{
 			if(checkStructureViolation())
@@ -200,12 +202,16 @@ public class DataBaseController
 			{
 				 results += affected;
 			}
+			endTime = System.currentTimeMillis();
 			JOptionPane.showMessageDialog(baseController.getAppFrame(), results);
 		}
 		catch(SQLException alterError)
 		{
+			endTime = System.currentTimeMillis();
 			displayErrors(alterError);
 		}
+		long queryTime = endTime - startTime;
+		baseController.getTimingInfoList().add(new QueryInfo(currentQuery, queryTime));
 	}
 	
 	/**
@@ -214,6 +220,8 @@ public class DataBaseController
 	public void dropStatement()
 	{
 		String results;
+		long startTime, endTime;
+		startTime = System.currentTimeMillis();
 		try
 		{
 			if(checkStructureViolation())
@@ -239,13 +247,16 @@ public class DataBaseController
 			{
 				results += " Dropped";
 			}
+			endTime = System.currentTimeMillis();
 			JOptionPane.showMessageDialog(baseController.getAppFrame(), results);
 		}
 		catch(SQLException dropError)
 		{
+			endTime = System.currentTimeMillis();
 			displayErrors(dropError);
 		}
-		
+		long queryTime = endTime - startTime;
+		baseController.getTimingInfoList().add(new QueryInfo(currentQuery, queryTime));
 		
 	}
 
@@ -283,7 +294,8 @@ public class DataBaseController
 			endTime = System.currentTimeMillis();
 			displayErrors(currentSQLError);
 		}
-		baseController.getTimingInfoList().add(new QueryInfo(query, endTime - startTime));
+		long queryTime = endTime - startTime;
+		baseController.getTimingInfoList().add(new QueryInfo(currentQuery, queryTime));
 		return results;
 	}
 	
@@ -298,6 +310,9 @@ public class DataBaseController
 	{
 		this.currentQuery = query;
 		String [][] results;
+		
+		long startTime, endTime;
+		startTime = System.currentTimeMillis();
 		
 		try
 		{
@@ -326,11 +341,13 @@ public class DataBaseController
 				
 			}
 			
+			endTime = System.currentTimeMillis();
 			answer.close();
 			firstStatement.close();
 		}
 		catch (SQLException currentSQLError)
 		{
+			endTime = System.currentTimeMillis();
 			results = new String [][] {
 										{"Query error"},
 										{"try sending better Query? :D"},
@@ -338,7 +355,8 @@ public class DataBaseController
 									 };
 			displayErrors(currentSQLError);
 		}
-		
+		long queryTime = endTime - startTime;
+		baseController.getTimingInfoList().add(new QueryInfo(currentQuery, queryTime));
 		
 		return results;
 	}
@@ -347,10 +365,13 @@ public class DataBaseController
 	 * uses metaData to retrieve a table and display it in a table from the Gui
 	 * @return
 	 */
-	public String [][] bestInfo ()
+	public String [][] bestInfo (String DBName, String tableName)
 	{
 		String [][] results;
-		String query = "SELECT * `book_reading`.`books`";
+		String query = "SELECT * FROM `" + DBName + "`.`" + tableName + "`";
+		
+		long startTime, endTime;
+		startTime = System.currentTimeMillis();
 		
 		try
 		{
@@ -373,14 +394,19 @@ public class DataBaseController
 				
 			}
 			
+			endTime = System.currentTimeMillis();
 			answer.close();
 			firstStatement.close();
 		}
 		catch (SQLException currentSQLError)
 		{
+			endTime = System.currentTimeMillis();
 			results = new String [][] {{"you get, NOTHING!!!! :D"}};
 			displayErrors(currentSQLError);
 		}
+		
+		long queryTime = endTime - startTime;
+		baseController.getTimingInfoList().add(new QueryInfo(currentQuery, queryTime));
 		return results;
 	}
 			
@@ -392,6 +418,8 @@ public class DataBaseController
 	{
 		String [][] results;
 		String query = "SHOW TABLES";
+		long startTime, endTime;
+		startTime = System.currentTimeMillis();
 
 		try
 		{
@@ -408,15 +436,19 @@ public class DataBaseController
 				results[answer.getRow() - 1][0] = answer.getString(1);
 			}
 			
+			endTime = System.currentTimeMillis();
 			answer.close();
 			firstStatement.close();
 		} 
 		catch (SQLException currentSQLError)
 		{
+			endTime = System.currentTimeMillis();
 			results = new String [][] {{"you get, NOTHING!!!! :D"}}; //is Robust!
 			displayErrors(currentSQLError);
 		}
 
+		long queryTime = endTime - startTime;
+		baseController.getTimingInfoList().add(new QueryInfo(currentQuery, queryTime));
 		return results;
 	}
 	
@@ -427,6 +459,8 @@ public class DataBaseController
 	public String [] getMetaData()
 	{
 		String [] colInfo;
+		long startTime, endTime;
+		startTime = System.currentTimeMillis();
 
 		try
 		{
@@ -442,17 +476,63 @@ public class DataBaseController
 				colInfo[spot] = myMeta.getColumnName(spot + 1);
 			}
 			
-			
+			endTime = System.currentTimeMillis();
 			answer.close();
 			firstStatement.close();
 		}
 		catch (SQLException currentSQLError)
 		{
+			endTime = System.currentTimeMillis();
 			colInfo = new String [] {"NOTHING!!"};
 			displayErrors(currentSQLError);
 		}
 		
+		long queryTime = endTime - startTime;
+		baseController.getTimingInfoList().add(new QueryInfo(currentQuery, queryTime));
 		return colInfo;
+	}
+	
+	/**
+	 * more genaric way of getting metadata
+	 * @param tableName specified table name
+	 * @return new array of string(s)
+	 */
+	public String [] getDBColumnNames(String tableName)
+	{
+		String [] cols;
+		currentQuery = "SELECT * FROM `" + tableName + "`";
+		long startTime, endTime;
+		startTime = System.currentTimeMillis();
+
+		try
+		{
+			Statement firstStatement = databaseConnection.createStatement();
+			ResultSet answer = firstStatement.executeQuery(currentQuery);
+			ResultSetMetaData myMeta = answer.getMetaData();
+			
+			
+			cols = new String[myMeta.getColumnCount()];
+			
+			for(int spot = 0; spot < myMeta.getColumnCount(); spot++)
+			{
+				cols[spot] = myMeta.getColumnName(spot + 1);
+			}
+			
+			
+			answer.close();
+			firstStatement.close();
+			endTime = System.currentTimeMillis();
+		}
+		catch (SQLException currentSQLError)
+		{
+			endTime = System.currentTimeMillis();
+			cols = new String [] {"NOTHING!!"};
+			displayErrors(currentSQLError);
+		}
+		
+		long queryTime = endTime - startTime;
+		baseController.getTimingInfoList().add(new QueryInfo(currentQuery, queryTime));
+		return cols;
 	}
 
 	/**
@@ -464,6 +544,8 @@ public class DataBaseController
 	{
 		String results = "";
 		String query = "SHOW DATABASES";
+		long startTime, endTime;
+		startTime = System.currentTimeMillis();
 
 		try
 		{
@@ -479,11 +561,16 @@ public class DataBaseController
 			// close to prevent data leaks and unintentional updating.
 			answer.close();
 			firstStatement.close();
-		} catch (SQLException currentSQLError)
+			endTime = System.currentTimeMillis();
+		} 
+		catch (SQLException currentSQLError)
 		{
+			endTime = System.currentTimeMillis();
 			displayErrors(currentSQLError);
 		}
 
+		long queryTime = endTime - startTime;
+		baseController.getTimingInfoList().add(new QueryInfo(currentQuery, queryTime));
 		return results;
 
 	}
@@ -497,6 +584,8 @@ public class DataBaseController
 	{
 		String results = "";
 		String query = "DESCRIBE `books`";
+		long startTime, endTime;
+		startTime = System.currentTimeMillis();
 		try
 		{
 			Statement firstStatement = databaseConnection.createStatement();
@@ -511,11 +600,16 @@ public class DataBaseController
 			// close to prevent data leaks and unintentional updating.
 			answer.close();
 			firstStatement.close();
-		} catch (SQLException currentSQLError)
+			endTime = System.currentTimeMillis();
+		} 
+		catch (SQLException currentSQLError)
 		{
+			endTime = System.currentTimeMillis();
 			displayErrors(currentSQLError);
 		}
 
+		long queryTime = endTime - startTime;
+		baseController.getTimingInfoList().add(new QueryInfo(currentQuery, queryTime));
 		return results;
 
 	}
@@ -526,7 +620,9 @@ public class DataBaseController
 	public int insert()
 	{
 		int rowsAffected = 0;
-		String query = "INSERT INTO `dota2`.`heroes`" + "(`name`, `attribute`, `role`, `role_2`, `role_3`, `role_4`, `attack_type`, `inital_dps`)" + " VALUES('jkfndkfdkf', 2, 1, 1, 1, 1, 1, 66);";
+		String query = "";
+		long startTime, endTime;
+		startTime = System.currentTimeMillis();
 		try
 		{
 			Statement insertStatement = databaseConnection.createStatement();
@@ -534,11 +630,16 @@ public class DataBaseController
 
 			// close to prevent data leaks and unintentional updating.
 			insertStatement.close();
-		} catch (SQLException currentSQLError)
+			endTime = System.currentTimeMillis();
+		}
+		catch (SQLException currentSQLError)
 		{
+			endTime = System.currentTimeMillis();
 			displayErrors(currentSQLError);
 		}
 
+		long queryTime = endTime - startTime;
+		baseController.getTimingInfoList().add(new QueryInfo(currentQuery, queryTime));
 		return rowsAffected;
 	}
 }
