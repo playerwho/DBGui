@@ -118,8 +118,8 @@ public class DBGuiPanel extends JPanel
 
 			public void actionPerformed(ActionEvent click)
 			{
-				String databaseAnswer = baseController.getDatabase().displayTables();
-				displayArea.setText(databaseAnswer);
+				
+				displayArea.setText(baseController.getDatabase().displayTables());
 			}
 		});
 		DBButton.addActionListener(new ActionListener()
@@ -127,7 +127,11 @@ public class DBGuiPanel extends JPanel
 
 			public void actionPerformed(ActionEvent click)
 			{
-			
+//				String savedText = baseController.loadQueryTimingInfo();
+//				if(savedText.length() < 1)
+//				{
+//					displayArea.setText("no");
+//				}
 			}
 		});
 		describeButton.addActionListener(new ActionListener()
@@ -135,8 +139,7 @@ public class DBGuiPanel extends JPanel
 
 			public void actionPerformed(ActionEvent click)
 			{
-				String databaseAnswer = baseController.getDatabase().describeTable();
-				displayArea.setText(databaseAnswer);
+				displayArea.setText(baseController.getDatabase().describeTable());
 			}
 		});
 	}

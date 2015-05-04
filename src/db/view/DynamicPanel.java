@@ -1,6 +1,8 @@
 package db.view;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -24,6 +26,8 @@ public class DynamicPanel extends JPanel
 	private SpringLayout baseLayout;
 	private DBGuiAppController baseController;
 	private JButton submitButton;
+	private ArrayList<JTextField> inputFieldList;
+	private String table;
 	
 	/**
 	 * connects chatbot panel to base controller
@@ -32,10 +36,12 @@ public class DynamicPanel extends JPanel
 	public DynamicPanel(DBGuiAppController baseController, String table)
 	{
 		this.baseController = baseController;
+		this.table = table;
 		baseLayout = new SpringLayout();
 		submitButton = new JButton();
+		inputFieldList = new ArrayList<JTextField>();
 		
-		setupPanel();
+		setupPanel(table);
 		setupListeners();	
 	}
 	
@@ -47,30 +53,100 @@ public class DynamicPanel extends JPanel
 		this.setLayout(baseLayout);
 		this.add(submitButton);
 		int startOff = 20;
-		for(int c = 0; c < baseController.getDatabase().getDBColumnNames(table).length; c++)
+		String [] columns = baseController.getDatabase().getDBColumnNames(table);
+		
+		for(int c = 0; c < columns.length; c++)
 		{
-			JLabel dynamicLable = new JLabel(baseController.getDatabase().getDBColumnNames(table)[c]);
-			JTextField textField = new JTextField(20);
-			this.add(dynamicLable);
-			this.add(textField);
+			if (!columns[c].equalsIgnoreCase("id"));
+			{
+				JTextField textField = new JTextField(20);
+				JLabel dynamicLable = new JLabel(columns[c] + " entry: ");
 			
-			baseLayout.putConstraint(SpringLayout.NORTH, dynamicLable, startOff, SpringLayout.NORTH, this);
-			baseLayout.putConstraint(SpringLayout.NORTH, textField, startOff, SpringLayout.NORTH, this);
-			baseLayout.putConstraint(SpringLayout.EAST, textField, 60, SpringLayout.EAST, dynamicLable);
 			
-			startOff += 50;
+				this.add(dynamicLable);
+				this.add(textField);
+			
+				dynamicLable.setName(columns[c] + "label");
+				textField.setName(columns[c] + "field");
+			
+				inputFieldList.add(textField);
+			
+				baseLayout.putConstraint(SpringLayout.NORTH, dynamicLable, startOff, SpringLayout.NORTH, this);
+				baseLayout.putConstraint(SpringLayout.NORTH, textField, startOff, SpringLayout.NORTH, this);
+				baseLayout.putConstraint(SpringLayout.EAST, textField, 60, SpringLayout.EAST, dynamicLable);
+			
+				startOff += 50;
+			}
 		}
 	}
 	
+	/**
+	 * values for a database
+	 * @return value
+	 */
+	private String getValueList()
+	{
+		String value = "(";
+		
+		for(int spot = 0; spot < inputFieldList.size(); spot++)
+		{
+			String temp = inputFieldList.get(spot).getText();
+			
+			if(spot == inputFieldList.size()-1)
+			{
+				value += "'" + temp + "')";
+			}
+			else
+			{
+				value += "'" + temp + "', ";
+			}
+			
+		}
+		
+		return value;
+	}
+	
+	/**
+	 * fields for a database
+	 * @return field
+	 */
+	private String getFieldList()
+	{
+		String field = "(";
+		
+		//needs format (`field`, `field`, `field`, .......)
+		for(int spot = 0; spot < inputFieldList.size(); spot++)
+		{
+			String temp = inputFieldList.get(spot).getName();
+			int cut = temp.indexOf("field");
+			temp = temp.substring(0,cut);
+			if(spot == inputFieldList.size()-1)
+			{
+				field += "`" + temp + "`)";
+			}
+			else
+			{
+				field += "`" + temp + "`, ";
+			}
+			
+		}
+		
+		return field;
+	}
+	
+	/**
+	 * buttons!!
+	 */
 	private void setupListeners()
 	{
-		ArrayList<JTextField> myTextFields = new ArrayList<JTextField>();
-		for(Component current : this.getComponents())
+		submitButton.addActionListener(new ActionListener()
 		{
-			if(current instanceof JTextField)
+			public void actionPerformed(ActionEvent click)
 			{
-				myTextFields.add((JTextField)current);
+				String myQuery = "INSERT INTO " + table + " " + getFieldList() + " VALUES " + getValueList() + ";";
+				baseController.getDatabase().submitQuery(myQuery);
 			}
-		}
+		
+		});
 	}
 }

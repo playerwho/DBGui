@@ -4,7 +4,15 @@ import javax.swing.JOptionPane;
 
 import db.model.QueryInfo;
 import db.view.DBGuiFrame;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class DBGuiAppController
 {
@@ -34,6 +42,7 @@ public class DBGuiAppController
 	 */
 	public void start()
 	{
+		loadQueryTimingInfo();
 	}
 	
 	/**
@@ -62,4 +71,60 @@ public class DBGuiAppController
 	{
 		return timingInfoList;
 	}
+
+	public void loadQueryTimingInfo()
+	{
+		File saveFile = new File("/Users/awid5247/Documents/Database/Saved.txt");
+		try
+		{	
+			Scanner readFileScanner;
+			if(saveFile.exists())
+			{
+				timingInfoList.clear();
+				readFileScanner = new Scanner(saveFile);
+				while(readFileScanner.hasNext())
+				{
+					String tempQuery = readFileScanner.nextLine();
+					readFileScanner.next();
+					long tempTime = readFileScanner.nextLong();
+					timingInfoList.add(new QueryInfo(tempQuery, tempTime));
+				}
+				readFileScanner.close();
+			}
+			
+		}
+		catch(IOException current)
+		{
+			this.getDatabase().displayErrors(current);
+		}
+	}
+	
+	public void saveQueryTimingInfo()
+	{
+		String fileName = "/Users/awid5247/Documents/DatabaseText/Saved.txt";
+		ArrayList<QueryInfo> output = getTimingInfoList();
+		PrintWriter outputWriter;
+		
+			try
+			{
+				outputWriter = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
+				for(QueryInfo currentInfo: output)
+				{
+					 outputWriter.write(currentInfo.getQuery() + " ");
+					 outputWriter.write(currentInfo.getQueryTime() + " milliseconds, " + "\n");
+				}
+				outputWriter.close();
+			}
+			catch(FileNotFoundException noExistingFile)
+			{
+				JOptionPane.showMessageDialog(appFrame, "There is no file here");
+				JOptionPane.showMessageDialog(appFrame, noExistingFile.getMessage());
+			}
+			catch(IOException inputOutputError)
+			{
+				JOptionPane.showMessageDialog(appFrame, "There is no file here");
+				JOptionPane.showMessageDialog(appFrame, inputOutputError.getMessage());
+			}
+		}	
 }
+
