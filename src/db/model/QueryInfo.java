@@ -2,10 +2,13 @@ package db.model;
 
 public class QueryInfo
 {
+	
+	
 	/**
 	 * The query being timed.
 	 */
 	private String query;
+
 	/**
 	 * The length of time (UNIX Standard) that it took to execute the query.
 	 */

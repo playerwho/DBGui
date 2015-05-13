@@ -110,8 +110,8 @@ public class DBGuiAppController
 				outputWriter = new PrintWriter(new BufferedWriter(new FileWriter(fileName)));
 				for(QueryInfo currentInfo: output)
 				{
-					 outputWriter.write(currentInfo.getQuery() + " ");
-					 outputWriter.write(currentInfo.getQueryTime() + " milliseconds, " + "\n");
+					 outputWriter.println(currentInfo.getQuery() + " ");
+					 outputWriter.println("Time taken: " + currentInfo.getQueryTime());
 				}
 				outputWriter.close();
 			}

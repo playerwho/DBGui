@@ -119,7 +119,7 @@ public class DBGuiPanel extends JPanel
 			public void actionPerformed(ActionEvent click)
 			{
 				
-				displayArea.setText(baseController.getDatabase().displayTables());
+				textArea.setText(baseController.getDatabase().displayTables());
 			}
 		});
 		DBButton.addActionListener(new ActionListener()
@@ -139,7 +139,7 @@ public class DBGuiPanel extends JPanel
 
 			public void actionPerformed(ActionEvent click)
 			{
-				displayArea.setText(baseController.getDatabase().describeTable());
+				textArea.setText(baseController.getDatabase().describeTable());
 			}
 		});
 	}

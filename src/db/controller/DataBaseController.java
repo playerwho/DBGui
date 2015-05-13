@@ -60,7 +60,7 @@ public class DataBaseController
 	public DataBaseController(DBGuiAppController baseController)
 	{
 
-		connectionString = "jdbc:mysql://10.228.5.160/book_reading?user=a.widmeier&password=widm140";
+		connectionString = "jdbc:mysql://localhost/dota2?user=root";
 		this.baseController = baseController;
 
 		checkDriver();
@@ -259,6 +259,7 @@ public class DataBaseController
 	{
 		String results = "";
 		String query = "SHOW TABLES";
+		currentQuery = query;
 		long startTime, endTime;
 		startTime = System.currentTimeMillis();
 
@@ -266,6 +267,7 @@ public class DataBaseController
 		{
 			Statement firstStatement = databaseConnection.createStatement();
 			ResultSet answer = firstStatement.executeQuery(query);
+			
 
 			// destructive method .getString/ While loop with .next grabs the next availible thing until theres nothing left/ stores answers into results string
 			while (answer.next())
@@ -351,8 +353,8 @@ public class DataBaseController
 	public String[][] bestInfo()
 	{
 		String[][] results;
-		String query = "SELECT * FROM `" + "book_reading" + "`.`" + "books" + "`";
-
+		String query = "SELECT * FROM 'heroes'";
+		currentQuery = query;
 		long startTime, endTime;
 		startTime = System.currentTimeMillis();
 
@@ -401,6 +403,7 @@ public class DataBaseController
 	{
 		String[][] results;
 		String query = "SHOW TABLES";
+		currentQuery = query;
 		long startTime, endTime;
 		startTime = System.currentTimeMillis();
 
@@ -442,13 +445,15 @@ public class DataBaseController
 	public String[] getMetaData()
 	{
 		String[] colInfo;
+		String query = "SHOW TABLES";
+		currentQuery = query;
 		long startTime, endTime;
 		startTime = System.currentTimeMillis();
 
 		try
 		{
 			Statement firstStatement = databaseConnection.createStatement();
-			ResultSet answer = firstStatement.executeQuery(currentQuery);
+			ResultSet answer = firstStatement.executeQuery(query);
 			ResultSetMetaData myMeta = answer.getMetaData();
 
 			colInfo = new String[myMeta.getColumnCount()];
@@ -524,6 +529,7 @@ public class DataBaseController
 	{
 		String results = "";
 		String query = "SHOW DATABASES";
+		currentQuery = query;
 		long startTime, endTime;
 		startTime = System.currentTimeMillis();
 
@@ -562,7 +568,8 @@ public class DataBaseController
 	public String describeTable()
 	{
 		String results = "";
-		String query = "DESCRIBE `books`";
+		String query = "DESCRIBE `heroes`"; //insert table name here for current DB
+		currentQuery = query;
 		long startTime, endTime;
 		startTime = System.currentTimeMillis();
 		try
