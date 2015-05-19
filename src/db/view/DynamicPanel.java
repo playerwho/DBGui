@@ -24,9 +24,23 @@ public class DynamicPanel extends JPanel
 	 * changes layout of the panel
 	 */
 	private SpringLayout baseLayout;
+	
+	/**
+	 * The controller from AppController Class
+	 */
 	private DBGuiAppController baseController;
+	
+	/**
+	 * Buttons
+	 */
 	private JButton submitButton;
+	/**
+	 *  A list for componants
+	 */
 	private ArrayList<JTextField> inputFieldList;
+	/**
+	 * a Table!
+	 */
 	private String table;
 	
 	/**

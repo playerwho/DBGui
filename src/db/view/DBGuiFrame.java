@@ -16,7 +16,11 @@ public class DBGuiFrame extends JFrame
 	 */
 	private DBGuiPanel appPanel;
 	
+	/**
+	 * declares the baseController from the AppController Class
+	 */
 	private DBGuiAppController baseController;
+	
 	/**
 	 * defines appPanel and calls setupFrame
 	 * @param baseController
@@ -38,6 +42,10 @@ public class DBGuiFrame extends JFrame
 		this.setContentPane(appPanel);
 		this.setVisible(true);	
 	}
+	
+	/**
+	 * The required methods for the Window Listener Interface, When the window closes, call the save QueryTiming method.
+	 */
 	private void setupListeners()
 	{
 		this.addWindowListener(new WindowListener()

@@ -60,11 +60,11 @@ public class DataBaseController
 	public DataBaseController(DBGuiAppController baseController)
 	{
 
-		connectionString = "jdbc:mysql://localhost/dota2?user=root";
+//		connectionString = "jdbc:mysql://localhost/dota2?user=root";
 		this.baseController = baseController;
 
 		checkDriver();
-		setupConnection();
+//		setupConnection();
 	}
 
 	/**
@@ -75,7 +75,8 @@ public class DataBaseController
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver");
-		} catch (Exception currentException)
+		}
+		catch (Exception currentException)
 		{
 			displayErrors(currentException);
 			System.exit(1);
@@ -120,7 +121,8 @@ public class DataBaseController
 		try
 		{
 			databaseConnection = DriverManager.getConnection(connectionString);
-		} catch (SQLException currentException)
+		}
+		catch (SQLException currentException)
 		{
 			displayErrors(currentException);
 		}
@@ -293,7 +295,7 @@ public class DataBaseController
 	 * Generic select based query for DBController checks for no destructive methods calls checkViolation method to do such checks
 	 * 
 	 * @param query
-	 * @return
+	 * @return the Data gathered from the database
 	 */
 	public String[][] selectQueryResults(String query)
 	{
@@ -348,7 +350,7 @@ public class DataBaseController
 	/**
 	 * uses metaData to retrieve a table and display it in a table from the Gui
 	 * 
-	 * @return
+	 * @return the info gathered from the database
 	 */
 	public String[][] bestInfo()
 	{
@@ -397,7 +399,7 @@ public class DataBaseController
 	/**
 	 * converts 1D data into 2D data
 	 * 
-	 * @return
+	 * @return the data gathered from the database
 	 */
 	public String[][] tableInfo()
 	{
@@ -563,7 +565,7 @@ public class DataBaseController
 	/**
 	 * displays the contents of the specified table
 	 * 
-	 * @return
+	 * @return the data gathered from the database
 	 */
 	public String describeTable()
 	{

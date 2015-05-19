@@ -35,6 +35,11 @@ public class DBGuiPanel extends JPanel
 	 * even more buttons
 	 */
 	private JButton describeButton;
+	
+	/**
+	 * MOREEEEEEE
+	 */
+	private JButton connectionButton;
 	/**
 	 * declares a Gui scroll pane
 	 */
@@ -63,6 +68,7 @@ public class DBGuiPanel extends JPanel
 	 * declares the cell renderer for the DB
 	 */
 	private TableCellWrapRenderer cellRenderer;
+	 
 	
 	/**
 	 * the baseContoller from the appController is the same as baseController in the Panel, also calls 4 methods and creates varius objects
@@ -71,26 +77,27 @@ public class DBGuiPanel extends JPanel
 	public DBGuiPanel(DBGuiAppController baseController)
 	{
 		this.baseController = baseController;
+		
 		tableButton = new JButton("Show Table");
-		DBButton = new JButton("Input Text");
+		DBButton = new JButton("Input Password");
+		connectionButton = new JButton("Connect to DB");
 		textArea = new JTextArea(10,30);
 		textPane = new JScrollPane(textArea);
 		displayArea = new JTextArea(10,30);
 		displayPane = new JScrollPane(displayArea);
 		baseLayout = new SpringLayout();
-		
 		describeButton = new JButton("Describe dota2");
 		passwordField = new JPasswordField(null, 20);
 		cellRenderer = new TableCellWrapRenderer();
 		
 		
-		setupTable();
+    	//setupTable();
 		setupPane();   
 		setupPanel();
 		setupLayout();
 		setupListeners();
 	}
-	
+
 	/**
 	 * sets up the JTable for database use
 	 */
@@ -106,10 +113,13 @@ public class DBGuiPanel extends JPanel
 			tableData.getColumnModel().getColumn(spot).setCellRenderer(cellRenderer);
 		}
 		
+		displayPane.repaint();
+	
+		
 	}
 
 	/**
-	 * each button sends a differen query torwards the database
+	 * each button sends a differen query torwards the database or just does some cool things like send a password to the database.
 	 */
 	private void setupListeners()
 	{
@@ -117,8 +127,7 @@ public class DBGuiPanel extends JPanel
 		{
 
 			public void actionPerformed(ActionEvent click)
-			{
-				
+			{	
 				textArea.setText(baseController.getDatabase().displayTables());
 			}
 		});
@@ -127,11 +136,16 @@ public class DBGuiPanel extends JPanel
 
 			public void actionPerformed(ActionEvent click)
 			{
-//				String savedText = baseController.loadQueryTimingInfo();
-//				if(savedText.length() < 1)
-//				{
-//					displayArea.setText("no");
-//				}
+				char[] passwordArray = passwordField.getPassword();
+				String pword = "";
+				
+				for(int x = 0; x < passwordArray.length; x++)
+				{
+					pword += passwordArray[x];
+				}
+				
+				baseController.getDatabase().connectionStringBuilder("localhost", "dota2", "root", pword);
+				
 			}
 		});
 		describeButton.addActionListener(new ActionListener()
@@ -140,6 +154,21 @@ public class DBGuiPanel extends JPanel
 			public void actionPerformed(ActionEvent click)
 			{
 				textArea.setText(baseController.getDatabase().describeTable());
+			}
+		});
+		connectionButton.addActionListener(new ActionListener()
+		{
+
+			public void actionPerformed(ActionEvent click)
+			{
+				baseController.getDatabase().setupConnection();
+				
+				setupTable();
+				displayPane.repaint();
+				
+				textArea.setText("");
+				passwordField.setText("");
+				
 			}
 		});
 	}
@@ -158,6 +187,8 @@ public class DBGuiPanel extends JPanel
 		baseLayout.putConstraint(SpringLayout.WEST, describeButton, 25, SpringLayout.WEST, this);
 		baseLayout.putConstraint(SpringLayout.WEST, displayPane, 500, SpringLayout.WEST, this);
 		baseLayout.putConstraint(SpringLayout.NORTH, textPane, 60, SpringLayout.NORTH, this);
+		baseLayout.putConstraint(SpringLayout.SOUTH, connectionButton, 50, SpringLayout.SOUTH, tableButton);
+		baseLayout.putConstraint(SpringLayout.EAST, connectionButton, -550, SpringLayout.EAST, this);
 	}
 	/**
 	 * sets up the window panel
@@ -168,12 +199,15 @@ public class DBGuiPanel extends JPanel
 		this.setLayout(baseLayout);
 		this.add(tableButton);
 		this.add(DBButton);
+		this.add(connectionButton);
 		this.add(displayPane);
 		this.add(textPane);
 		this.add(describeButton);
 		this.add(passwordField);
 		passwordField.setEchoChar('♋');
 		passwordField.setFont(new Font("Serif", Font.BOLD, 40));
+		textArea.setText("enter password above to connect");
+		
 	}
 
 	/**
@@ -185,5 +219,4 @@ public class DBGuiPanel extends JPanel
 		textArea.setWrapStyleWord(true);
 		textArea.setEditable(true);
 	}
-
 }

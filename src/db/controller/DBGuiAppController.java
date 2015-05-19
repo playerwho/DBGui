@@ -1,6 +1,7 @@
 package db.controller;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 
 import db.model.QueryInfo;
 import db.view.DBGuiFrame;
@@ -25,6 +26,9 @@ public class DBGuiAppController
 	 */
 	private DataBaseController database;
 	
+	/**
+	 * A list for adding the time stamps of queries
+	 */
 	private ArrayList<QueryInfo> timingInfoList;
 	
 	/**
@@ -47,7 +51,7 @@ public class DBGuiAppController
 	
 	/**
 	 * getter for appFrame
-	 * @return
+	 * @return The project frame
 	 */
 	public DBGuiFrame getAppFrame()
 	{	
@@ -56,7 +60,7 @@ public class DBGuiAppController
 	
 	/**
 	 * getter for the database
-	 * @return
+	 * @return the database class
 	 */
 	public DataBaseController getDatabase()
 	{
@@ -65,13 +69,17 @@ public class DBGuiAppController
 	
 	/**
 	 * getter for timing info
-	 * @return
+	 * @return The list of time stamps
 	 */
 	public ArrayList<QueryInfo> getTimingInfoList()
 	{
 		return timingInfoList;
 	}
-
+	
+	
+	/**
+	 * loads the saved text file full of time stamps
+	 */
 	public void loadQueryTimingInfo()
 	{
 		File saveFile = new File("/Users/awid5247/Documents/Database/Saved.txt");
@@ -99,6 +107,9 @@ public class DBGuiAppController
 		}
 	}
 	
+	/**
+	 * Saves the time Stamps to a specified file, in this case called Saved.txt
+	 */
 	public void saveQueryTimingInfo()
 	{
 		String fileName = "/Users/awid5247/Documents/DatabaseText/Saved.txt";
